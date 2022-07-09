@@ -124,8 +124,7 @@ default:
     - scan-frontend:
         requires: [build-frontend]
     - scan-backend:
-        context:
-          - slack_context
+        context: slack_context
         requires: [build-backend]
         
     
