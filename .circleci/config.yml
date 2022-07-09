@@ -3,6 +3,20 @@ orbs:
   slack: circleci/slack@4.1
 
 jobs:
+  deploy:
+    executor:
+      name: node/default
+    steps:
+      - checkout
+      - node/install-packages
+      - run:
+          command: npm run deploy
+      - slack/notify:
+          channel: ABCXYZ
+          event: fail
+          template: basic_fail_1
+
+jobs:
   build-frontend:
     docker:
       - image: circleci/node:13.8.0
@@ -72,7 +86,7 @@ jobs:
         - save_cache:
             paths: [backend/node_modules]
             key: test-backend
-
+  
   scan-frontend:
       docker:
         - image: circleci/node:13.8.0
@@ -105,28 +119,26 @@ jobs:
         - save_cache:
             paths: [frontend/node_modules]
             key: scan-frontend
-
         - slack/notify:
-            channel: $SLACK_DEFAULT_CHANNEL
-            event: fail
-            template: basic_fail_1
+          channel: $SLACK_DEFAULT_CHANNEL
+          event: fail
+          template: basic_fail_1
 
 
 workflows:
-default:
-  jobs:
-    - build-frontend
-    - build-backend 
-    - test-frontend:
-        requires: [build-frontend]
-    - test-backend:
-        requires: [build-backend]
-    - scan-frontend:
-        requires: [build-frontend]
-    - scan-backend:
-        context: slack_context
-        requires: [build-backend]
-        
+  default:
+    jobs:
+      - build-frontend
+      - build-backend 
+      - test-frontend:
+          requires: [build-frontend]
+      - test-backend:
+          requires: [build-backend]
+      - scan-frontend:
+          requires: [build-frontend]
+      - scan-backend:
+          context: slack_context
+          requires: [build-backend]
+      
     
-  
-    
+      
