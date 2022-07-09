@@ -2,19 +2,6 @@ version: 2.1
 orbs:
   slack: circleci/slack@4.1
 
-jobs:
-  deploy:
-    executor:
-      name: node/default
-    steps:
-      - checkout
-      - node/install-packages
-      - run:
-          command: npm run deploy
-      - slack/notify:
-          channel: ABCXYZ
-          event: fail
-          template: basic_fail_1
 
 jobs:
   build-frontend:
@@ -120,9 +107,9 @@ jobs:
             paths: [frontend/node_modules]
             key: scan-frontend
         - slack/notify:
-          channel: $SLACK_DEFAULT_CHANNEL
-          event: fail
-          template: basic_fail_1
+            channel: $SLACK_DEFAULT_CHANNEL
+            event: fail
+            template: basic_fail_1
 
 
 workflows:
