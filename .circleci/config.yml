@@ -183,7 +183,7 @@ jobs:
 # configure infrastructure
   configure-infrastructure:
     docker:
-      - image: python:3.7-alpine3.11
+      - image: python:3.8.2-alpine
     steps: 
       - checkout
     
