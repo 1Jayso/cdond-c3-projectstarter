@@ -40,20 +40,20 @@ jobs:
   test-frontend:
     docker:
       - image: circleci/node:13.8.0
-     steps:
-      - checkout
-      - restore_cache:
-          keys: [test-frontend]
-      - run:
-        name: front-end test
-        command: |
-          cd frontend
-          npm install
-          npm run test
-          
-       - save_cache:
-          paths: [frontend/node_modules]
-          key: test-frontend
+    steps:
+    - checkout
+    - restore_cache:
+        keys: [test-frontend]
+    - run:
+      name: front-end test
+      command: |
+        cd frontend
+        npm install
+        npm run test
+        
+      - save_cache:
+        paths: [frontend/node_modules]
+        key: test-frontend
 
 
 
