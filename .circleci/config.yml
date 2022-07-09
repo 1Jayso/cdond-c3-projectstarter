@@ -190,6 +190,7 @@ jobs:
     
       - add_ssh_keys:
           fingerprints:
+            
             - "6f:60:a6:74:c6:5b:e8:19:ec:43:8d:6f:3c:17:3c:9f"
 
       - run:
