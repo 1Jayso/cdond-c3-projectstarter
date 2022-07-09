@@ -148,7 +148,7 @@ jobs:
         - run:
             name: Install tar utility
             command: |
-              sudo apt install -y tar gzip
+              yum install -y tar gzip
         - run:
             name: Ensure backend infrastructure exists
             command: |
@@ -178,7 +178,7 @@ jobs:
             root: ~/
             paths:
               - project/.circleci/ansible/inventory.txt
-        - destroy-environment
+        # - destroy-environment
 
 
 workflows:
