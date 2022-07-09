@@ -62,7 +62,7 @@ jobs:
         - restore_cache:
             keys: [test-backend]
         - run:
-            name: backend-end test
+            name: backend test
             command: |
               cd backend
               npm install
@@ -70,6 +70,23 @@ jobs:
         - save_cache:
             paths: [backend/node_modules]
             key: test-backend
+  
+  scan-frontend:
+      docker:
+        - image: circleci/node:13.8.0
+      steps:
+        - checkout
+        - restore_cache:
+            keys: [scan-frontend]
+        - run:
+            name: front-end scan
+            command: |
+              cd frontend
+              npm install
+              npm audit fix --audit-level=critical  # Do not use the --force option along with the command below in your local
+        - save_cache:
+            paths: [frontend/node_modules]
+            key: scan-frontend
 
 
 workflows:
@@ -81,6 +98,8 @@ workflows:
           requires: [build-frontend]
       - test-backend:
           requires: [build-backend]
+      - scan-frontend:
+          requires: [build-frontend]
       
     
       
