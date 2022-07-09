@@ -3,113 +3,113 @@ orbs:
   slack: circleci/slack@4.1
 
 jobs:
-build-frontend:
-  docker:
-    - image: circleci/node:13.8.0
-  steps:
-    - checkout
-    - restore_cache:
-        keys: [frontend-build]
-    - run:
-        name: Build front-end
-        command: |
-          cd frontend
-          npm install
-          npm run build
-    - save_cache:
-        paths: [frontend/node_modules]
-        key: frontend-build
-
-
-build-backend:
-  docker:
-    - image: circleci/node:13.8.0
-  steps:
-    - checkout
-    - restore_cache:
-        keys: [backend-build]
-    - run:
-        name: Back-end build
-        command: |
-          cd backend
-          npm install
-          npm run build
-      
-    - save_cache:
-        paths: [backend/node_modules]
-        key: backend-build
-
-test-frontend:
-  docker:
-    - image: circleci/node:13.8.0
-  steps:
-    - checkout
-    - restore_cache:
-        keys: [test-frontend]
-    - run:
-        name: front-end test
-        command: |
-          cd frontend
-          npm install
-          npm run test
-    - save_cache:
-        paths: [frontend/node_modules]
-        key: test-frontend
-
-test-backend:
+  build-frontend:
     docker:
       - image: circleci/node:13.8.0
     steps:
       - checkout
       - restore_cache:
-          keys: [test-backend]
+          keys: [frontend-build]
       - run:
-          name: backend test
-          command: |
-            cd backend
-            npm install
-            npm run test
-      - save_cache:
-          paths: [backend/node_modules]
-          key: test-backend
-
-scan-frontend:
-    docker:
-      - image: circleci/node:13.8.0
-    steps:
-      - checkout
-      - restore_cache:
-          keys: [scan-frontend]
-      - run:
-          name: front-end scan
+          name: Build front-end
           command: |
             cd frontend
             npm install
-            npm audit --audit-level=critical  # Do not use the --force option along with the command below in your local
+            npm run build
       - save_cache:
           paths: [frontend/node_modules]
-          key: scan-frontend
-scan-backend:
+          key: frontend-build
+
+
+  build-backend:
     docker:
       - image: circleci/node:13.8.0
     steps:
       - checkout
       - restore_cache:
-          keys: [scan-backend]
+          keys: [backend-build]
       - run:
-          name: back-end scan
+          name: Back-end build
           command: |
             cd backend
             npm install
-            npm audit fix --audit-level=critical # Do not use the --force option along with the command below in your local
+            npm run build
+        
+      - save_cache:
+          paths: [backend/node_modules]
+          key: backend-build
+
+  test-frontend:
+    docker:
+      - image: circleci/node:13.8.0
+    steps:
+      - checkout
+      - restore_cache:
+          keys: [test-frontend]
+      - run:
+          name: front-end test
+          command: |
+            cd frontend
+            npm install
+            npm run test
       - save_cache:
           paths: [frontend/node_modules]
-          key: scan-frontend
+          key: test-frontend
 
-      - slack/notify:
-          channel: $SLACK_DEFAULT_CHANNEL
-          event: fail
-          template: basic_fail_1
+  test-backend:
+      docker:
+        - image: circleci/node:13.8.0
+      steps:
+        - checkout
+        - restore_cache:
+            keys: [test-backend]
+        - run:
+            name: backend test
+            command: |
+              cd backend
+              npm install
+              npm run test
+        - save_cache:
+            paths: [backend/node_modules]
+            key: test-backend
+
+  scan-frontend:
+      docker:
+        - image: circleci/node:13.8.0
+      steps:
+        - checkout
+        - restore_cache:
+            keys: [scan-frontend]
+        - run:
+            name: front-end scan
+            command: |
+              cd frontend
+              npm install
+              npm audit --audit-level=critical  # Do not use the --force option along with the command below in your local
+        - save_cache:
+            paths: [frontend/node_modules]
+            key: scan-frontend
+  scan-backend:
+      docker:
+        - image: circleci/node:13.8.0
+      steps:
+        - checkout
+        - restore_cache:
+            keys: [scan-backend]
+        - run:
+            name: back-end scan
+            command: |
+              cd backend
+              npm install
+              npm audit fix --audit-level=critical # Do not use the --force option along with the command below in your local
+        - save_cache:
+            paths: [frontend/node_modules]
+            key: scan-frontend
+
+        - slack/notify:
+            channel: $SLACK_DEFAULT_CHANNEL
+            event: fail
+            template: basic_fail_1
 
 
 workflows:
