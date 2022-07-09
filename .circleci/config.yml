@@ -1,4 +1,7 @@
 version: 2.1
+orbs:
+  slack: circleci/slack@4.1
+
 commands:
   destroy-environment:
     description: Destroy backend and frontend cloudformation stacks given a workflow ID
@@ -27,8 +30,6 @@ commands:
               ls -la
               npm run migrations:revert
             fi
-orbs:
-  slack: circleci/slack@4.1
 
 
 jobs:
