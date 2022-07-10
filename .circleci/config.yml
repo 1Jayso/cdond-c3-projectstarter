@@ -2,13 +2,6 @@ version: 2.1
 orbs:
   slack: circleci/slack@4.1
 
-slack-notify:
-  description: Send alert notifications to slack when there is a job failure.
-  steps:
-    - slack/notify:
-            channel: $SLACK_DEFAULT_CHANNEL
-            event: fail
-            template: basic_fail_1
 
 commands:
   destroy-environment:
@@ -39,6 +32,14 @@ commands:
               npm run migrations:revert
             fi
 
+# slack notification when a job fails            
+  slack-notify:
+    description: Send alert notifications to slack when there is a job failure.
+    steps:
+      - slack/notify:
+          channel: $SLACK_DEFAULT_CHANNEL
+          event: fail
+          template: basic_fail_1
 
 jobs:
   build-frontend:
