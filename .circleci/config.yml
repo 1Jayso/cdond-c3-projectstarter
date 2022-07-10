@@ -2,7 +2,6 @@ version: 2.1
 orbs:
   slack: circleci/slack@4.1
 
-
 commands:
   destroy-environment:
     description: Destroy backend and frontend cloudformation stacks given a workflow ID
@@ -15,17 +14,6 @@ commands:
             aws s3 ls
             aws s3 rm s3://udapeople-${CIRCLE_WORKFLOW_ID:0:7} --recursive
             aws cloudformation delete-stack --stack-name udapeople-frontend-${CIRCLE_WORKFLOW_ID:0:7}
-
-# slack notification when a job fails            
-  slack-notify:
-    description: Send alert notifications to slack when there is a job failure.
-    steps:
-      - slack/notify:
-          channel: $SLACK_DEFAULT_CHANNEL
-          event: fail
-          template: basic_fail_1
-
-          
   revert-migrations:
     description: Revert the last migration if successfully run in the current workflow.
     steps:
@@ -42,7 +30,6 @@ commands:
               ls -la
               npm run migrations:revert
             fi
-
 
 
 jobs:
@@ -62,7 +49,6 @@ jobs:
       - save_cache:
           paths: [frontend/node_modules]
           key: frontend-build
-      - slack-notify
 
 
   build-backend:
@@ -82,7 +68,6 @@ jobs:
       - save_cache:
           paths: [backend/node_modules]
           key: backend-build
-      - slack-notify 
 
   test-frontend:
     docker:
@@ -100,7 +85,6 @@ jobs:
       - save_cache:
           paths: [frontend/node_modules]
           key: test-frontend
-      - slack-notify 
 
   test-backend:
       docker:
@@ -118,7 +102,6 @@ jobs:
         - save_cache:
             paths: [backend/node_modules]
             key: test-backend
-        - slack-notify
   
   scan-frontend:
       docker:
@@ -136,8 +119,6 @@ jobs:
         - save_cache:
             paths: [frontend/node_modules]
             key: scan-frontend
-        - slack-notify
-
   scan-backend:
       docker:
         - image: circleci/node:13.8.0
@@ -154,8 +135,10 @@ jobs:
         - save_cache:
             paths: [frontend/node_modules]
             key: scan-frontend
-        - slack-notify
-            
+        - slack/notify:
+            channel: $SLACK_DEFAULT_CHANNEL
+            event: fail
+            template: basic_fail_1
   
 # Infrastructure deployment
   deploy-infrastructure:
@@ -197,7 +180,6 @@ jobs:
             paths:
               - project/.circleci/ansible/inventory.txt
         - destroy-environment
-        - slack-notify
       
 # configure infrastructure
   configure-infrastructure:
@@ -225,7 +207,6 @@ jobs:
             cd .circleci/ansible
             ansible-playbook -i inventory.txt configure-server.yml
       - destroy-environment
-      - slack-notify
 
   run-migrations:
     docker:
@@ -259,7 +240,6 @@ jobs:
             fi
       - destroy-environment
       - revert-migrations
-      - slack-notify
 
 
   deploy-frontend:
@@ -300,7 +280,6 @@ jobs:
               aws s3 cp ./dist s3://udapeople-${CIRCLE_WORKFLOW_ID:0:7} --recursive
         
       - destroy-environment
-      - slack-notify
 
 
   deploy-backend:
@@ -346,7 +325,6 @@ jobs:
             ansible-playbook -i inventory.txt deploy-backend.yml
       - destroy-environment  
       - revert-migrations
-      - slack-notify
 
 
   smoke-test:
@@ -388,7 +366,6 @@ jobs:
             fi
       - destroy-environment  
       - revert-migrations
-      - slack-notify
 
   cloudfront-update:
     docker:
@@ -417,7 +394,6 @@ jobs:
             echo Current Workflow Id: "${CIRCLE_WORKFLOW_ID:0:7}"
       - destroy-environment  
       - revert-migrations
-      - slack-notify
   
   cleanup:
     docker: 
@@ -443,7 +419,6 @@ jobs:
             else
               echo "$OldWorkflowID==$CurrentWorkflowID => nothing needs to be done..."
             fi
-      - slack-notify
 
 workflows:
   default:
@@ -451,43 +426,32 @@ workflows:
       - build-frontend
       - build-backend 
       - test-frontend:
-          context: slack_context
           requires: [build-frontend]
       - test-backend:
-          context: slack_context
           requires: [build-backend]
       - scan-frontend:
-          context: slack_context
           requires: [build-frontend]
       - scan-backend:
           context: slack_context
           requires: [build-backend]
       - deploy-infrastructure:
-          context: slack_context
           requires: [test-frontend, test-backend, scan-frontend, scan-backend]
           filters:
             branches:
               only: [master]
       - configure-infrastructure:
-          context: slack_context
           requires: [deploy-infrastructure]
       - run-migrations:
-          context: slack_context
           requires: [configure-infrastructure]
       - deploy-frontend:
-          context: slack_context
           requires: [run-migrations]
       - deploy-backend:
-          context: slack_context
           requires: [run-migrations]
       - smoke-test:
-          context: slack_context
           requires: [deploy-backend, deploy-frontend]
       - cloudfront-update:
-          context: slack_context
           requires: [smoke-test]
       - cleanup:
-          context: slack_context
           requires: [cloudfront-update]
         
     
