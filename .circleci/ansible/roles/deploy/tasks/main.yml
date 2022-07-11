@@ -5,11 +5,8 @@
     src: ~/project/backend.tar.gz
     dest: /home/ubuntu/backend.tar.gz
 
-- name: 'run node application'
-  become: yes
   shell: |
-    
-    cd /home/ubuntu
+    cd /home/ubuntu 
     # mkdir app
     # mv backend.tar.gz app/backend.tar.gz
     # cd app
@@ -18,6 +15,22 @@
     npm run build
     pm2 stop default
     pm2 start npm -- start
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
