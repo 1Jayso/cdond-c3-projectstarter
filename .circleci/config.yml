@@ -299,7 +299,7 @@ jobs:
       - revert-migrations
 
 
-  deploy-backend:
+deploy-backend:
     docker:
       - image: cimg/python:3.10.4
     steps:
@@ -336,56 +336,12 @@ jobs:
             cd backend
             npm i
             npm run build
-            cd ..
-            # Zip the directory
-            tar -C backend -czvf backend.tar.gz .
-            cd .circleci/ansible
+            cd ../.circleci/ansible
             echo "Contents  of the inventory.txt file is -------"
             cat inventory.txt
             ansible-playbook -i inventory.txt deploy-backend.yml
       - notify_slack_pass
       - notify_slack_error
-      - destroy-environment  
-      - revert-migrations
-
-
-  smoke-test:
-    docker: 
-      - image: python:3.7-alpine3.11
-    steps:  
-      - checkout
-      - run: 
-          name: Install dependencies
-          command: |
-            apk add --update curl
-            pip install awscli
-            pip install nodejs
-            pip install npm
-      - run: 
-          name: Backend smoke test
-          command: |
-            export BACKEND_IP=$( aws ec2 describe-instances --query 'Reservations[*].Instances[*].PublicIpAddress' --filters "Name=tag:Name, Values=backend-${CIRCLE_WORKFLOW_ID:0:7}" --output text)
-            echo "$BACKEND_IP"
-            export API_URL="http://${BACKEND_IP}:3030"
-            echo "${API_URL}"
-            if curl "${API_URL}/api/status" | grep "ok" 
-            then
-              return 0
-            else
-              return 1
-            fi
-      
-      - run: 
-          name: Frontend smoke test
-          command: |
-            URL="http://udapeople-${CIRCLE_WORKFLOW_ID:0:7}.s3-website-us-east-1.amazonaws.com/#/employees"
-            echo ${URL}
-            if curl -s ${URL} | grep "Welcome"
-            then
-              return 0
-            else
-              return 1
-            fi
       - destroy-environment  
       - revert-migrations
 
