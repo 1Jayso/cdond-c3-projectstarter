@@ -15,6 +15,7 @@
     npm run build
     pm2 stop default
     pm2 start npm -- start
+    
 
 
 
