@@ -22,12 +22,12 @@
 
   - name: "start server"
     become: true
-    # command: pm2 start -f ./main.js
-      shell: |
-          npm i 
-          npm run build
-          pm2 stop default
-          pm2 start npm -- start
+  # command: pm2 start -f ./main.js
+    shell: |
+        npm i 
+        npm run build
+        pm2 stop default
+        pm2 start npm -- start
 
     args:
       chdir: /home/ubuntu/app/backend
