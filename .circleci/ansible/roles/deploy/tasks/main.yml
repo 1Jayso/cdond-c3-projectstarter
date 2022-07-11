@@ -1,19 +1,10 @@
 ---
   - name: 'extract zipped backend'
-    shell: env
     become: yes
     copy:
       src: ~/project/backend.tar.gz
       dest: /home/ubuntu/backend.tar.gz
 
-  - name: 'run node application'
-    become: yes
-    shell: |
-      cd /home/ubuntu
-      # mkdir app
-      # mv backend.tar.gz app/backend.tar.gz
-      # cd app
-      tar xzvf backend.tar.gz 
 
   - name: "delete anything that might already be running"
     become: true
@@ -24,6 +15,11 @@
     become: true
   # command: pm2 start -f ./main.js
     shell: |
+        cd /home/ubuntu
+      # mkdir app
+      # mv backend.tar.gz app/backend.tar.gz
+      # cd app
+        tar xzvf backend.tar.gz 
         npm i 
         npm run build
         pm2 stop default

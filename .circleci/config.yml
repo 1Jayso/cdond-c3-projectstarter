@@ -35,7 +35,7 @@ commands:
     steps:
       - run: 
           name: Revert migrations
-          working_directory: ./backend
+          working_directory: ./backend 
           when: on_fail 
           command: |
             SUCCESS=$(curl --insecure https://kvdb.io/Y7Tx1uUb6z96Jg8jA6oWZ6/migration_${CIRCLE_WORKFLOW_ID:0:7})
