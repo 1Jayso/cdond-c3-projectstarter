@@ -1,3 +1,61 @@
+---
+- name: 'extract zipped backend'
+  become: yes
+  copy:
+    src: ~/project/backend.tar.gz
+    dest: /home/ubuntu/backend.tar.gz
+
+- name: 'run node application'
+  become: yes
+  shell: |
+    
+    cd /home/ubuntu
+    # mkdir app
+    # mv backend.tar.gz app/backend.tar.gz
+    # cd app
+    tar xzvf backend.tar.gz 
+    npm i 
+    npm run build
+    pm2 stop default
+    pm2 start npm -- start
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 # ---
 #   - name: 'extract zipped backend'
 #     become: yes
@@ -70,8 +128,8 @@
      ENVIRONMENT: production
      TYPEORM_CONNECTION: "{{ lookup('env', 'TYPEORM_CONNECTION') }}"
      TYPEORM_MIGRATIONS_DIR: "./migrations"
-     TYPEORM_MIGRATIONS: "./migrations/*.js"
-     TYPEORM_ENTITIES: "./modules/domain/**/*.entity.js"
+     TYPEORM_MIGRATIONS: "./migrations/*.ts"
+     TYPEORM_ENTITIES: "./modules/domain/**/*.entity.ts"
      TYPEORM_HOST: "{{ lookup('env', 'TYPEORM_HOST') }}"
      TYPEORM_PORT: "{{ lookup('env', 'TYPEORM_PORT') }}"
      TYPEORM_USERNAME: "{{ lookup('env', 'TYPEORM_USERNAME') }}"
