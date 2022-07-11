@@ -1,20 +1,19 @@
 ---
-  - name: "show remote environment"
-    shell: env
+- name: 'extract zipped backend'
+  shell: env
+  become: yes
+  copy:
+    src: ~/project/backend.tar.gz
+    dest: /home/ubuntu/backend.tar.gz
 
-  - name: "copy backend binaries"
-    become: true
-    synchronize:
-      src: ../../backend/dist
-      dest: /home/ubuntu/uda_app
-      recursive: true
-
-  - name: "copy node_modules"
-    become: true
-    synchronize:
-      src: ../../backend/node_modules
-      dest: /home/ubuntu/uda_app
-      recursive: true
+- name: 'run node application'
+  become: yes
+  shell: |
+    cd /home/ubuntu
+    # mkdir app
+    # mv backend.tar.gz app/backend.tar.gz
+    # cd app
+    tar xzvf backend.tar.gz 
 
   - name: "delete anything that might already be running"
     become: true
@@ -23,17 +22,28 @@
 
   - name: "start server"
     become: true
-    command: pm2 start -f ./main.js
+    # command: pm2 start -f ./main.js
+      shell: |
+          npm i 
+          npm run build
+          pm2 stop default
+          pm2 start npm -- start
+
     args:
-      chdir: /home/ubuntu/uda_app/dist
+      chdir: /home/ubuntu/app/backend
     environment:
      ENVIRONMENT: production
      TYPEORM_CONNECTION: "{{ lookup('env', 'TYPEORM_CONNECTION') }}"
      TYPEORM_MIGRATIONS_DIR: "./migrations"
-     TYPEORM_MIGRATIONS: "./migrations/*.js"
-     TYPEORM_ENTITIES: "./modules/domain/**/*.entity.js"
+     TYPEORM_MIGRATIONS: "./migrations/*.ts"
+     TYPEORM_ENTITIES: "./modules/domain/**/*.entity.ts"
      TYPEORM_HOST: "{{ lookup('env', 'TYPEORM_HOST') }}"
      TYPEORM_PORT: "{{ lookup('env', 'TYPEORM_PORT') }}"
      TYPEORM_USERNAME: "{{ lookup('env', 'TYPEORM_USERNAME') }}"
      TYPEORM_PASSWORD: "{{ lookup('env', 'TYPEORM_PASSWORD') }}"
      TYPEORM_DATABASE: "{{ lookup('env', 'TYPEORM_DATABASE') }}"
+
+
+
+
+     
