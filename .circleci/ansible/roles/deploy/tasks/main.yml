@@ -21,9 +21,8 @@
       npm run build
       pm2 stop default
       pm2 start npm -- start
+      cd /home/ubuntu/backend
 
-    args:
-      chdir: /home/ubuntu/app/backend
     environment:
      ENVIRONMENT: production
      TYPEORM_CONNECTION: "{{ lookup('env', 'TYPEORM_CONNECTION') }}"
@@ -39,4 +38,3 @@
 
 
 
-     
