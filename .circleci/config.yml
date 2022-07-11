@@ -14,6 +14,15 @@ commands:
             aws s3 ls
             aws s3 rm s3://udapeople-${CIRCLE_WORKFLOW_ID:0:7} --recursive
             aws cloudformation delete-stack --stack-name udapeople-frontend-${CIRCLE_WORKFLOW_ID:0:7}
+
+  slack-notify:
+    description: Send alert notifications to slack when there is a job failure.
+    steps:          
+      - slack/notify:
+          channel: $SLACK_DEFAULT_CHANNEL
+          event: fail
+          template: basic_fail_1
+
   revert-migrations:
     description: Revert the last migration if successfully run in the current workflow.
     steps:
@@ -360,10 +369,11 @@ jobs:
             echo ${URL}
             if curl -s ${URL} | grep "Welcome"
             then
-              return 0
+              return 1
             else
               return 1
             fi
+      - slack-notify
       - destroy-environment  
       - revert-migrations
 
