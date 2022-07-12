@@ -298,49 +298,49 @@ jobs:
       - destroy-environment
       - revert-migrations
 
-   deploy-backend:
-    docker:
-      - image: cimg/python:3.10.4
-    steps:
-      - checkout
+  deploy-backend:
+  docker:
+    - image: cimg/python:3.10.4
+  steps:
+    - checkout
+    
+    - add_ssh_keys:
+        fingerprints:
+          - "21:f8:d9:45:f3:51:1c:eb:75:42:01:5d:cd:59:8b:e9"
+    
+    - attach_workspace:
+        at: ~/
       
-      - add_ssh_keys:
-          fingerprints:
-            - "21:f8:d9:45:f3:51:1c:eb:75:42:01:5d:cd:59:8b:e9"
-      
-      - attach_workspace:
-          at: ~/
-        
-      - run:
-          name: "Install dependencies"
-          command: |
-            sudo apt-get update
-            sudo apt-get install awscli
-            sudo apt install python3-pip
-            pip3 --version
-            sudo python3 -m pip install ansible
-            sudo apt install rsync -y
-      
-      - run: 
-          name: "Install Nodejs"
-          command: |
-            sudo apt-get update
-            curl -fsSL https://deb.nodesource.com/setup_13.x | sudo -E bash - 
-            sudo apt-get install -y nodejs
-            node --version
-            npm --version   
-      - run:
-          name: "Deploy backend"
-          command: |
-            cd backend
-            npm i
-            npm run build
-            cd ../.circleci/ansible
-            echo "Contents  of the inventory.txt file is -------"
-            cat inventory.txt
-            ansible-playbook -i inventory.txt deploy-backend.yml
-      - destroy-environment  
-      - revert-migrations
+    - run:
+        name: "Install dependencies"
+        command: |
+          sudo apt-get update
+          sudo apt-get install awscli
+          sudo apt install python3-pip
+          pip3 --version
+          sudo python3 -m pip install ansible
+          sudo apt install rsync -y
+    
+    - run: 
+        name: "Install Nodejs"
+        command: |
+          sudo apt-get update
+          curl -fsSL https://deb.nodesource.com/setup_13.x | sudo -E bash - 
+          sudo apt-get install -y nodejs
+          node --version
+          npm --version   
+    - run:
+        name: "Deploy backend"
+        command: |
+          cd backend
+          npm i
+          npm run build
+          cd ../.circleci/ansible
+          echo "Contents  of the inventory.txt file is -------"
+          cat inventory.txt
+          ansible-playbook -i inventory.txt deploy-backend.yml
+    - destroy-environment  
+    - revert-migrations
 
 
   smoke-test:
