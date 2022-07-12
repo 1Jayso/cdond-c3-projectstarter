@@ -1,18 +1,20 @@
 ---
-  hosts: web
-  user: ubuntu
-  become: yes
-  copy:
-    src: ~/project/backend.tar.gz
-    dest: /home/ubuntu/backend.tar.gz
+  - name: Extract zip file
+    hosts: web
+    user: ubuntu
+    become: yes
+    copy:
+      src: ~/project/backend.tar.gz
+      dest: /home/ubuntu/backend.tar.gz
 
-  shell: |
-    cd /home/ubuntu 
-    tar xzvf backend.tar.gz 
-    npm i 
-    npm run build
-    pm2 stop default
-    pm2 start npm -- start
+  - name: Extract zip file
+    shell: |
+      cd /home/ubuntu 
+      tar xzvf backend.tar.gz 
+      npm i 
+      npm run build
+      pm2 stop default
+      pm2 start npm -- start
 
 
 
