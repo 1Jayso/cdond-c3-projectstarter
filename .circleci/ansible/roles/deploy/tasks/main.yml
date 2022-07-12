@@ -1,5 +1,4 @@
 ---
-- name: 'extract zipped backend'
   hosts: web
   user: ubuntu
   become: yes
@@ -7,7 +6,6 @@
     src: ~/project/backend.tar.gz
     dest: /home/ubuntu/backend.tar.gz
 
-- name: 'run node application' 
   shell: |
     cd /home/ubuntu 
     tar xzvf backend.tar.gz 
