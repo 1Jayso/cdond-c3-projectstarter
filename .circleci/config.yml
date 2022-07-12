@@ -298,17 +298,19 @@ jobs:
       - destroy-environment
       - revert-migrations
 
-  deploy-backend:
+   deploy-backend:
     docker:
-      - image: python:3.7-alpine3.11
+      - image: cimg/python:3.10.4
     steps:
       - checkout
+      
       - add_ssh_keys:
           fingerprints:
             - "21:f8:d9:45:f3:51:1c:eb:75:42:01:5d:cd:59:8b:e9"
+      
       - attach_workspace:
           at: ~/
-      
+        
       - run:
           name: "Install dependencies"
           command: |
@@ -337,8 +339,6 @@ jobs:
             echo "Contents  of the inventory.txt file is -------"
             cat inventory.txt
             ansible-playbook -i inventory.txt deploy-backend.yml
-      # - notify_slack_pass
-      # - notify_slack_error
       - destroy-environment  
       - revert-migrations
 
