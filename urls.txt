@@ -1,4 +1,4 @@
 Github repo url: https://github.com/1Jayso/cdond-c3-projectstarter/tree/master
-Cloudfront url: https://d2lyd4ut1i2mx6.cloudfront.net
-s3 url: http://udapeople-8efb1be.s3-website-us-east-1.amazonaws.com/#/employees
+Cloudfront url: http://d2lzfpdx6jpxnl.cloudfront.net
+s3 url: http://udapeople-4fcc848.s3-website-us-east-1.amazonaws.com
 
