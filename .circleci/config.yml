@@ -15,6 +15,7 @@ commands:
             aws s3 rm s3://udapeople-${CIRCLE_WORKFLOW_ID:0:7} --recursive
             aws cloudformation delete-stack --stack-name udapeople-frontend-${CIRCLE_WORKFLOW_ID:0:7}
 
+
   notify_slack_error:
     description: Send alert notifications to slack when there is a job failure.
     steps:          
